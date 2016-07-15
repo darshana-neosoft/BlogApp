@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% load static %}
+    <meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Blog</title>
+	
+    <!-- bootstrap -->
+    <link href="{% static 'css/bootstrap/bootstrap.css' %}" rel="stylesheet" />
+
+    <!-- libraries -->
+
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/compiled/layout.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/compiled/elements.css' %}">
+    <!-- this page specific styles -->
+
+    <!-- google font libraries -->
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,300|Titillium+Web:200,300,400' rel='stylesheet' type='text/css'>
+    
+ 
+	
+</head>
+<body>
+	<header class="navbar" id="header-navbar">
+		<div class="container">
+			<a href="index.html" id="logo" class="navbar-brand col-md-3 col-sm-3 col-xs-12">
+			<!-- 	<img src="img/logo.png" alt=""/>  --><span>Blogger</span>
+			</a>
+			
+			<button class="navbar-toggle" data-target=".navbar-ex1-collapse" data-toggle="collapse" type="button">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="fa fa-bars"></span>
+			</button>
+			
+			<div class="nav-no-collapse pull-right" id="header-nav">
+				<ul class="nav navbar-nav pull-right">
+					<li class="dropdown profile-dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						Welcome {{name}}
+							<span class="hidden-xs"></span> <b class="caret"></b>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="user-profile.html"><i class="fa fa-user"></i>Profile</a></li>
+							
+						<!-- 	<li><a href="#"><i class="fa fa-envelope-o"></i>Messages</a></li> -->
+							<li><a href="/log-out/"><i class="fa fa-power-off"></i>Logout</a></li>
+						</ul>
+					</li>
+					
+				</ul>
+			</div>
+		</div>
+	</header>
+	<div class="container">
+		<div class="row">
+			
+			<div class="col-md-12" id="content-wrapper">
+				<div class="row">
+					<div class="col-lg-12">
+					<div class="clearfix">
+							<h1 class="pull-left">Blogger</h1>
+							
+						</div>
+					<div class="main-box clearfix" style="background:#E7E7E7;">
+					
+									<div class="clearfix">
+										<h2 class="pull-left">Blogs</h2>
+											<div class="filter-block ">
+												<div class="form-group pull-left">
+													<input class="form-control" placeholder="Search..." style="width:666px;" type="text">
+													<i class="fa fa-search search-icon"></i>
+												</div>
+													<a class="btn btn-primary" data-toggle="modal" data-target="#addblog">
+														<i class="fa fa-plus-circle fa-lg"></i> Add Blog
+													</a>
+											</div>
+									</div>
+									
+									<div class="row">	
+									
+									<input type="hidden" id="user_id" value="{{user_id}}">	
+									{% for blog in blog_list %}
+							<div class="col-lg-12">
+								<div class="main-box clearfix">
+									<a><img src="https://cdn-images-1.medium.com/fit/c/36/36/0*NkhMmXkjtkF-vH6G.jpeg"  alt="Go to the profile of Heather Havrilesky"></a>
+									<a>
+									{{ blog.blog_owner }} </a>									
+<div>
+<h3>{{ blog.blog_title }}</h3>
+
+<strong>
+<p> {{ blog.blog_content|safe|truncatewords:"40"|linebreaks }}</p></strong>
+</div>
+<div><a href="/blog-details/?blog_id={{blog.blog_id}}">Read more…</a></div>
+
+
+<div>
+<button id="{{blog.blog_id}}" onclick="add_like({{blog.blog_id}})"><span>
+<svg class="svgIcon-use" width="25" height="25" viewBox="0 0 25 25">
+<path d="M12.5 21a.492.492 0 0 1-.327-.122c-.278-.24-.61-.517-.978-.826-2.99-2.5-7.995-6.684-7.995-10.565C3.2 6.462 5.578 4 8.5 4c1.55 0 3 .695 4 1.89a5.21 5.21 0 0 1 4-1.89c2.923 0 5.3 2.462 5.3 5.487 0 3.97-4.923 8.035-7.865 10.464-.42.35-.798.66-1.108.93a.503.503 0 0 1-.327.12z" fill-rule="evenodd"></path></svg></span>
+</span></button> <b id="like_count{{blog.blog_id}}">{{blog.blog_likes}} likes</b>
+</div>
+<div style="float: right;">
+<a href="/blog-details/?blog_id={{blog.blog_id}}">{{blog.blog_comments}} Comment</a>
+
+</div></div>
+								</div>
+								
+									{% endfor %}				
+													
+							</div>
+						</div>
+
+								</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+<div id="addblog" class="modal fade" role="dialog">
+<div class="modal-dialog">
+<!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Blog</h4>
+      </div>
+      <form id="blogform" method="POST" >
+      {% csrf_token %}
+      <div class="modal-body">
+
+        <div class="row">
+			<div class="col-xs-12">
+			<div class="form-group">
+				<label for="examplename">Blog Title*</label>
+				
+				<input type="name" class="form-control" name="blog_title" id="blog_title" placeholder="Blog Title" required pattern="[A-Za-z]+">
+			</div>
+			
+			</div>
+			<div class="col-xs-12">
+					<div class="form-group">
+				<label for="exampleInputdet">Blog Content</label>
+				<textarea class="form-control" id="blog_content" name="blog_content" placeholder="Blog Content" required="" pattern="[A-Za-z\s]+" rows="4"></textarea> 
+			</div>
+				</div>							
+		</div>
+
+
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn btn-success" value="ADD">
+      </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+	
+	<!-- global scripts -->
+	<script src="{% static 'js/jquery.js' %}"></script>
+	<script src="{% static 'js/bootstrap.js' %}"></script>
+
+	
+	<!-- this page specific scripts -->
+
+	
+	<!-- theme scripts -->
+	<script src="{% static 'js/scripts.js' %}"></script>
+	
+	<!-- this page specific inline scripts -->
+	<script type="text/javascript">
+
+	$("#blogform").submit(function (e) {
+	
+	e.preventDefault();
+	var formData = $(this).serialize();
+	$.ajax({
+    			type : 'POST',
+    			url : '/add-blog/',
+    			data : formData,
+    			
+    			success: function(response) {
+    				console.log(response);
+        			if(response.success=='true'){
+                        alert(response.message);
+        			          $("#addblog").modal('hide');
+        			           window.location.href = '/blog-page/'
+        	
+        			}
+        			if(response.success=='false'){
+        				alert(response.message);
+        			}
+    			},
+    			error: function(response){
+           			alert(response.message);
+                },
+		    })
+		
+	});
+	
+	function add_like(blog_id){
+	
+	var user_id = $("#user_id").val();
+	var blog_id = blog_id;
+	
+		$.ajax({
+    			type : 'POST',
+    			url : '/add-blog-like/',
+    			data : {'user_id':user_id,'blog_id':blog_id},
+    			
+    			success: function(response) {
+    				console.log(response);
+        			if(response.success=='true'){
+                   $("#like_count"+blog_id).html(response.blog_likes);
+        			    
+        	
+        			}
+        			if(response.success=='false'){
+        				
+        			}
+    			},
+    			error: function(response){
+           			alert(response.message);
+                },
+		    })
+	}
+	
+	</script>
+	
+</body>
+</html>
